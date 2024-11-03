@@ -38,6 +38,7 @@ const ModalChats: React.FC = () => {
     const [response, setResponse] = useState<ApiResponse | null>(null);
     // Set initial messages state with the provided data
   const [messages, setMessages] = useState<Message[]>([]);
+  console.log(messages,'____messages')
   const fetchMessages = async () => {
     try {
         const res = await fetch('/api/sendMessage'); // Call the GET API
@@ -60,9 +61,11 @@ const requestOptions = {
   redirect: "follow"
 };
 
-fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBO39E456UYZBKefgUkgu9DJG2otrifMGDLdzWtUqkMNrjXXojoHYS5J6NRZCRWaFQ1G07UHeL6bZAZBDh0ZA9xFS36DZCzBHI06acqRyOhnfDxNbUwnCzTkXlr6avfvdMZCJxcXG8i83RNHIzBYRuca4rZBi2VEaKP7hBdjbxtHFK3XjdHVZCFk5yJX6g949Yiy2yYZCLShn03cnv4ZD", requestOptions)
+fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBO5yXsh1ZAvm8ILIrxVGFGqnAnNOyycYbadMlODgmqDyKhnlWwFxTEgPJHhc2pPLZCo3X0MraE7Q7ermLyyy3vpZClLc9LMtvC9doI3KSpdNYDZBUUEVU11zQvAMuVd0uIeZCvVcVe4XzZA9qHBGjtYgrZAYHw2rUerNXMpCFOXfBWs16WXUoDZBQwLs7E3i0ju11xLpOZCD2FNgUZD", requestOptions)
   .then((response) => response.text())
-  .then((result) => console.log(result,'result_____________++')
+  .then((result) => {console.log(result,'result_____________++')
+    // setMessages(result)
+  }
 
 )
   .catch((error) => console.error(error));
@@ -108,7 +111,7 @@ useEffect(() => {
 
   // Extract distinct users from messages
   const users = Array.from(
-    new Set(messages.map((message) => message.recipient_id))
+    new Set(messages?.map((message) => message.recipient_id))
   ).map((id) => {
     const message = messages.find((msg) => msg.recipient_id === id);
     return {
