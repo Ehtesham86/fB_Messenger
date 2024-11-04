@@ -56,24 +56,39 @@ const ModalChats: React.FC = () => {
     }
 };
 
-const requestOptions = {
-  method: "GET",
-  redirect: "follow"
-};
+ 
 
-fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBO5yXsh1ZAvm8ILIrxVGFGqnAnNOyycYbadMlODgmqDyKhnlWwFxTEgPJHhc2pPLZCo3X0MraE7Q7ermLyyy3vpZClLc9LMtvC9doI3KSpdNYDZBUUEVU11zQvAMuVd0uIeZCvVcVe4XzZA9qHBGjtYgrZAYHw2rUerNXMpCFOXfBWs16WXUoDZBQwLs7E3i0ju11xLpOZCD2FNgUZD", requestOptions)
-  .then((response) => response.text())
-  .then((result) => {console.log(result,'result_____________++')
-    // setMessages(result)
-  }
-
-)
-  .catch((error) => console.error(error));
-
+ 
 useEffect(() => {
     fetchMessages(); // Fetch messages when component mounts
 }, []);
+const myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
 
+const raw = JSON.stringify({
+  "recipient": {
+    "id": "8805839732787665"
+  },
+  "messaging_type": "RESPONSE",
+  "message": {
+    "text": "Hello, World!"
+  },
+  "access_token": "EAAH20PSWGqEBO9FzDZBIS5FkZBfyliVUlPT2nVw1nZCqDl9tPqXQQbanR2tHOqGBRNgrFFd3zZCtCt22sDrNWk9vtiRFfVQjlInkvl228WmGmnaNhAQzTMOmn2j1HVPZB0hv1qZBbSaJ9yX5GbffZBVXEfUh7Wvut5aGDBB6odMREvAgE6kEUxGrAZBUjQ1mZCrtBM5CuT0rsLZCZB34GM9eZBBnESsZD"
+});
+
+const requestOptions = {
+  method: "POST",
+  headers: myHeaders,
+  body: raw,
+  redirect: "follow"
+};
+
+fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO9FzDZBIS5FkZBfyliVUlPT2nVw1nZCqDl9tPqXQQbanR2tHOqGBRNgrFFd3zZCtCt22sDrNWk9vtiRFfVQjlInkvl228WmGmnaNhAQzTMOmn2j1HVPZB0hv1qZBbSaJ9yX5GbffZBVXEfUh7Wvut5aGDBB6odMREvAgE6kEUxGrAZBUjQ1mZCrtBM5CuT0rsLZCZB34GM9eZBBnESsZD", requestOptions)
+  .then((response) => response.text())
+  .then((result) => {console.log(result)
+    console.log(result,'______')
+  })
+  .catch((error) => console.error(error));
   // State to track selected user and new message text
 
   const handleSubmit = async (e: FormEvent) => {
