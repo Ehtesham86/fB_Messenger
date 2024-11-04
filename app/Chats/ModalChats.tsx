@@ -62,33 +62,34 @@ const ModalChats: React.FC = () => {
 useEffect(() => {
     fetchMessages(); // Fetch messages when component mounts
 }, []);
-const myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
+const sendMessage = () => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
 
-const raw = JSON.stringify({
-  "recipient": {
-    "id": "8805839732787665"
-  },
-  "messaging_type": "RESPONSE",
-  "message": {
-    "text": "Hello, World!"
-  },
-  "access_token": "EAAH20PSWGqEBO9FzDZBIS5FkZBfyliVUlPT2nVw1nZCqDl9tPqXQQbanR2tHOqGBRNgrFFd3zZCtCt22sDrNWk9vtiRFfVQjlInkvl228WmGmnaNhAQzTMOmn2j1HVPZB0hv1qZBbSaJ9yX5GbffZBVXEfUh7Wvut5aGDBB6odMREvAgE6kEUxGrAZBUjQ1mZCrtBM5CuT0rsLZCZB34GM9eZBBnESsZD"
-});
+  const raw = JSON.stringify({
+    recipient: {
+      id: "8805839732787665",
+    },
+    messaging_type: "RESPONSE",
+    message: {
+      text: "Hello, World!",
+    },
+    access_token: "EAAH20PSWGqEBO6ZCNZBzN5KegDp1j5eOHOgD2jPe3LTJtvGj33GPkgkLsVq6zCEhUQVTZA5ReKRl3BC8ehMqCZApscozo5IA60bVfvz1MYZAIOykS4ZAdmo0QqBO8LYlPDFrz0frtshboa5bFNvN5ttPOqysMR84oVZADelzonzCVCpBRcKYtCtBxwVzZCbxVJi1MvSj8ZAltBZAEbDSqIZBFwbnCUT",
+  });
 
-const requestOptions = {
-  method: "POST",
-  headers: myHeaders,
-  body: raw,
-  redirect: "follow"
+  const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO6ZCNZBzN5KegDp1j5eOHOgD2jPe3LTJtvGj33GPkgkLsVq6zCEhUQVTZA5ReKRl3BC8ehMqCZApscozo5IA60bVfvz1MYZAIOykS4ZAdmo0QqBO8LYlPDFrz0frtshboa5bFNvN5ttPOqysMR84oVZADelzonzCVCpBRcKYtCtBxwVzZCbxVJi1MvSj8ZAltBZAEbDSqIZBFwbnCUT", requestOptions)
+    .then((response) => response.text())
+    .then((result) => console.log(result))
+    .catch((error) => console.error("Error:", error));
 };
 
-fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO9FzDZBIS5FkZBfyliVUlPT2nVw1nZCqDl9tPqXQQbanR2tHOqGBRNgrFFd3zZCtCt22sDrNWk9vtiRFfVQjlInkvl228WmGmnaNhAQzTMOmn2j1HVPZB0hv1qZBbSaJ9yX5GbffZBVXEfUh7Wvut5aGDBB6odMREvAgE6kEUxGrAZBUjQ1mZCrtBM5CuT0rsLZCZB34GM9eZBBnESsZD", requestOptions)
-  .then((response) => response.text())
-  .then((result) => {console.log(result)
-    console.log(result,'______')
-  })
-  .catch((error) => console.error(error));
   // State to track selected user and new message text
 
   const handleSubmit = async (e: FormEvent) => {
