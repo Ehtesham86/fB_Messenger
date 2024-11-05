@@ -74,7 +74,7 @@ const sendMessage = () => {
     message: {
       text: "Hello, World!",
     },
-    access_token: "EAAH20PSWGqEBO6ZCNZBzN5KegDp1j5eOHOgD2jPe3LTJtvGj33GPkgkLsVq6zCEhUQVTZA5ReKRl3BC8ehMqCZApscozo5IA60bVfvz1MYZAIOykS4ZAdmo0QqBO8LYlPDFrz0frtshboa5bFNvN5ttPOqysMR84oVZADelzonzCVCpBRcKYtCtBxwVzZCbxVJi1MvSj8ZAltBZAEbDSqIZBFwbnCUT",
+    access_token: "EAAH20PSWGqEBO4ofnp0hgYggpkLdHEkQy8UvZATbfA1fhs1VNoX2y8pvZACEvcw6XhDPR8peVlHeqCpi92SOahChM0bY0RAvqggRG6XL266nahszr2527HIGBcF57kTbAUoTctwqZBFBTNZCRa2SOxQeUYU3MHLGvmidW39vani4uMrClwflQyCL8y1ZC81kHZArgHMA4dVOZAyNZAFZBsWoItNQZD",
   });
 
   const requestOptions = {
@@ -84,7 +84,7 @@ const sendMessage = () => {
     redirect: "follow",
   };
 
-  fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO6ZCNZBzN5KegDp1j5eOHOgD2jPe3LTJtvGj33GPkgkLsVq6zCEhUQVTZA5ReKRl3BC8ehMqCZApscozo5IA60bVfvz1MYZAIOykS4ZAdmo0QqBO8LYlPDFrz0frtshboa5bFNvN5ttPOqysMR84oVZADelzonzCVCpBRcKYtCtBxwVzZCbxVJi1MvSj8ZAltBZAEbDSqIZBFwbnCUT", requestOptions)
+  fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO4ofnp0hgYggpkLdHEkQy8UvZATbfA1fhs1VNoX2y8pvZACEvcw6XhDPR8peVlHeqCpi92SOahChM0bY0RAvqggRG6XL266nahszr2527HIGBcF57kTbAUoTctwqZBFBTNZCRa2SOxQeUYU3MHLGvmidW39vani4uMrClwflQyCL8y1ZC81kHZArgHMA4dVOZAyNZAFZBsWoItNQZD", requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
     .catch((error) => console.error("Error:", error));
