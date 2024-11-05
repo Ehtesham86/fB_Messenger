@@ -112,8 +112,7 @@ const sendMessage = () => {
         setResponse(data);
         if (data.success) {
             setMessage(''); // Clear the input after sending
-            setSenderName(''); // Clear the sender name input
-            fetchMessages(); // Refresh the message list after sending
+             fetchMessages(); // Refresh the message list after sending
         }
     } catch (error: any) {
         setError(error.message);

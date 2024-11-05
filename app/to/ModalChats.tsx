@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,FormEvent } from "react";
 import { IoIosSend } from "react-icons/io";
 
 interface User {
@@ -16,14 +16,106 @@ interface Message {
   from: User;
   to: { data: User[] };
 }
+interface ApiResponse {
+  success: boolean;
+  data?: any; // You can specify the type based on your response structure
+  error?: any; // You can specify the type based on your error structure
+  messages?: any; // You can specify the type based on your error structure
 
+}
 const ModalChats: React.FC = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
   const [isMobileView, setIsMobileView] = useState<boolean>(window.innerWidth < 768);
   const [userMessages, setUserMessages] = useState<Message[]>([]); // Store messages for the selected user
   const [users, setUsers] = useState<User[]>([]); // Store user list
+  const [error, setError] = useState<string | null>(null);
+   const [newMessage, setNewMessage] = useState<string>("");
+     const [recipientId, setRecipientId] = useState<string >('');
+    const [senderName, setSenderName] = useState<string>(""); // State for sender's name
 
+    const [response, setResponse] = useState<ApiResponse | null>(null);
+    // Set initial messages state with the provided data
+  const [messages, setMessages] = useState<Message[]>([]);
+  console.log(messages,'____messages')
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setResponse(null);
+    setError(null);
+
+    try {
+        const res = await fetch('/api/sendMessage', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message, recipientId, senderName }), // Include sender name in the request
+        });
+
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const data: ApiResponse = await res.json();
+        setResponse(data);
+        if (data.success) {
+            setMessage(''); // Clear the input after sending
+             fetchMessages(); // Refresh the message list after sending
+        }
+    } catch (error: any) {
+        setError(error.message);
+    }
+};
+  const fetchMessages = async () => {
+    try {
+        const res = await fetch('/api/sendMessage'); // Call the GET API
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const data: ApiResponse = await res.json();
+        if (data.success) {
+            setMessages(data.messages);
+            
+        } else {
+            setError(data.error);
+        }
+    } catch (error: any) {
+        setError(error.message);
+    }
+};
+
+useEffect(() => {
+  fetchMessages(); // Fetch messages when component mounts
+}, []);
+const sendMessage = () => {
+const myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+const raw = JSON.stringify({
+  recipient: {
+    id: "8805839732787665",
+  },
+  messaging_type: "RESPONSE",
+  message: {
+    text: "Hello, World!",
+  },
+  access_token: "EAAH20PSWGqEBO4ofnp0hgYggpkLdHEkQy8UvZATbfA1fhs1VNoX2y8pvZACEvcw6XhDPR8peVlHeqCpi92SOahChM0bY0RAvqggRG6XL266nahszr2527HIGBcF57kTbAUoTctwqZBFBTNZCRa2SOxQeUYU3MHLGvmidW39vani4uMrClwflQyCL8y1ZC81kHZArgHMA4dVOZAyNZAFZBsWoItNQZD",
+});
+
+const requestOptions = {
+  method: "POST",
+  headers: myHeaders,
+  body: raw,
+  redirect: "follow",
+};
+
+fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO4ofnp0hgYggpkLdHEkQy8UvZATbfA1fhs1VNoX2y8pvZACEvcw6XhDPR8peVlHeqCpi92SOahChM0bY0RAvqggRG6XL266nahszr2527HIGBcF57kTbAUoTctwqZBFBTNZCRa2SOxQeUYU3MHLGvmidW39vani4uMrClwflQyCL8y1ZC81kHZArgHMA4dVOZAyNZAFZBsWoItNQZD", requestOptions)
+  .then((response) => response.text())
+  .then((result) => console.log(result))
+  .catch((error) => console.error("Error:", error));
+};
+
+ 
+useEffect(() => {
+    fetchMessages(); // Fetch messages when component mounts
+}, []);
   // Fetch chat data from the API
   useEffect(() => {
     const fetchChatData = async () => {
@@ -51,9 +143,8 @@ const ModalChats: React.FC = () => {
   const handleRecipientClick = (userId: string) => {
     setSelectedUserId(userId);
   };
-
   const renderContactsList = () => {
-    // Create a unique list of users based on their IDs
+    // Create a unique list of users based on their IDs, filtering out undefined values
     const uniqueUsers = Array.from(
       new Set(
         userMessages.flatMap((msg) => [
@@ -61,25 +152,35 @@ const ModalChats: React.FC = () => {
           ...msg.to.data.map(user => user.id)
         ])
       )
-    ).map(userId => users.find(user => user.id === userId)); // Find user objects by ID
-  
+    )
+    .map(userId => users.find(user => user.id === userId))
+    .filter((user): user is { id: string; name: string; email: string } => user !== undefined); // Filter out undefined values
+
     return (
       <div className={`h-full ${!isMobileView ? 'md:w-1/3 lg:w-1/4' : ''} rounded bg-gradient-to-t from-black to-slate-500 border-r p-4`}>
         <h3 className="text-xl text-gray-300 font-serif font-bold mb-4">Contacts</h3>
-        <div className="overflow-y-auto  h-[600px]"> {/* Fixed height for contact list with scroll if needed */}
+        <div className="overflow-y-auto h-[600px]"> {/* Fixed height for contact list with scroll if needed */}
           {uniqueUsers.map((user) => (
             <button
-              key={user?.id}
-              onClick={() => handleRecipientClick(user!.id)}
-              className={`w-full p-2 text-left rounded-lg flex items-center gap-2 mb-2 ${selectedUserId === user?.id ? "bg-blue-100" : "hover:bg-gray-500"}`}
+              key={user.id}
+              onClick={() => {
+                handleRecipientClick(user.id);
+                setRecipientId(user.id);
+                setSenderName(user.name);
+                console.log(user, '______________');
+              }}
+              className={`w-full p-2 text-left rounded-lg flex items-center gap-2 mb-2 ${
+                selectedUserId === user.id ? "bg-blue-100" : "hover:bg-gray-500"
+              }`}
             >
-              <span className="font-semibold font-serif text-black">{user?.name}</span>
+              <span className="font-semibold font-serif text-black">{user.name}</span>
             </button>
           ))}
         </div>
       </div>
     );
-  };
+};
+
 
   const renderChatMessages = () => (
     <div className={`flex flex-col w-full ${!isMobileView ? 'md:w-2/3 lg:w-3/4' : ''}`}>
@@ -126,10 +227,8 @@ const ModalChats: React.FC = () => {
           className="flex-grow p-2 rounded-lg border focus:outline-none bg-gray-100 focus:ring focus:ring-blue-200 mr-2"
         />
         <button
-          onClick={() => {
-            setMessage(""); // Clear input on "send" click
-            // Here you could add a function to send the message to the server
-          }}
+                 onClick={handleSubmit}
+
           className="px-4 py-2 items-center flex gap-2 bg-gray-800 text-white rounded-lg hover:bg-gradient-to-r from-gray-700 via-black to-white"
         >
           <IoIosSend size={20} /> <p>Send</p>
