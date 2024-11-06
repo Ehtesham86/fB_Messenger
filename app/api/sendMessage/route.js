@@ -6,7 +6,7 @@ export async function POST(req) {
     const supabase = createClientUser();
     const { message, recipientId, senderName } = await req.json();
 
-    const accessToken = 'EAAH20PSWGqEBO2RGqggBP2XhFwDkqUnE76bpvhzl40NAr1Op7QlBR8RIAzzvdAPtz9hbhCg4cEYaSIxUfjh8NJh2vzDoSuWvYns8NpHguuX6XjkC9h73RoLV3gRhk4cOTT9nLZAVS1Yetp9AslbinzgFyXHXt6XmMqhAZB1TdHgYcse5Ul0Bww5zR1fGDGTj8uZCxL8yMfr6EUoxCkxzaUP'; // replace with your actual access token
+    const accessToken = 'EAAH20PSWGqEBOZCElUH2uMp284ojgYZCg7qkCXxzjHbHkmUtn2HTzcvs9DPqesT1ZBkrjHThkZBT2lIVaxXiDuFh0nXdI5P4fAujjJotamY22QebYql4ysBOEwDP6VbxxxRLAAVBgKBD1wk0QZBIUUf3ZATnUkvEKMU4jCEL1lztUgmur2lwZC3gWLMc0EUZC6id1w4qbcNyDzr6sg9SuMhf7Ltv'; // replace with your actual access token
 
     try {
         // Check if recipient exists

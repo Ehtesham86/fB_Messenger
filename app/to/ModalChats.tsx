@@ -100,10 +100,10 @@ const ModalChats: React.FC = () => {
         setResponse(data);
 
         if (data.success) {
-        scrollToBottom();
-
-            setMessage(""); // Clear the input after sending
-             fetchMessages(); // Refresh the message list after sending
+          
+          setMessage(""); // Clear the input after sending
+          fetchMessages(); // Refresh the message list after sending
+          scrollToBottom();
         }
     } catch (error: any) {
         setError(error.message);
@@ -120,6 +120,7 @@ const ModalChats: React.FC = () => {
         if (data.success) {
             setMessages(data.messages);
             
+           
             setRefresh(!refresh)
         } else {
             setError(data.error);
@@ -132,6 +133,9 @@ const ModalChats: React.FC = () => {
 useEffect(() => {
   fetchMessages(); // Fetch messages when component mounts
 }, []);
+useEffect(()=>{
+  scrollToBottom()
+},[userMessages])
 const sendMessage = () => {
 const myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
@@ -144,7 +148,7 @@ const raw = JSON.stringify({
   message: {
     text: "Hello, World!",
   },
-  access_token: "EAAH20PSWGqEBO2RGqggBP2XhFwDkqUnE76bpvhzl40NAr1Op7QlBR8RIAzzvdAPtz9hbhCg4cEYaSIxUfjh8NJh2vzDoSuWvYns8NpHguuX6XjkC9h73RoLV3gRhk4cOTT9nLZAVS1Yetp9AslbinzgFyXHXt6XmMqhAZB1TdHgYcse5Ul0Bww5zR1fGDGTj8uZCxL8yMfr6EUoxCkxzaUP",
+  access_token: "EAAH20PSWGqEBOZCElUH2uMp284ojgYZCg7qkCXxzjHbHkmUtn2HTzcvs9DPqesT1ZBkrjHThkZBT2lIVaxXiDuFh0nXdI5P4fAujjJotamY22QebYql4ysBOEwDP6VbxxxRLAAVBgKBD1wk0QZBIUUf3ZATnUkvEKMU4jCEL1lztUgmur2lwZC3gWLMc0EUZC6id1w4qbcNyDzr6sg9SuMhf7Ltv",
 });
 
 const requestOptions = {
@@ -154,7 +158,7 @@ const requestOptions = {
   redirect: "follow",
 };
 
-fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO2RGqggBP2XhFwDkqUnE76bpvhzl40NAr1Op7QlBR8RIAzzvdAPtz9hbhCg4cEYaSIxUfjh8NJh2vzDoSuWvYns8NpHguuX6XjkC9h73RoLV3gRhk4cOTT9nLZAVS1Yetp9AslbinzgFyXHXt6XmMqhAZB1TdHgYcse5Ul0Bww5zR1fGDGTj8uZCxL8yMfr6EUoxCkxzaUP", requestOptions)
+fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBOZCElUH2uMp284ojgYZCg7qkCXxzjHbHkmUtn2HTzcvs9DPqesT1ZBkrjHThkZBT2lIVaxXiDuFh0nXdI5P4fAujjJotamY22QebYql4ysBOEwDP6VbxxxRLAAVBgKBD1wk0QZBIUUf3ZATnUkvEKMU4jCEL1lztUgmur2lwZC3gWLMc0EUZC6id1w4qbcNyDzr6sg9SuMhf7Ltv", requestOptions)
   .then((response) => response.text())
   .then((result) => console.log(result))
   .catch((error) => console.error("Error:", error));
@@ -162,16 +166,16 @@ fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EA
 
  
 useEffect(() => {
+  
   scrollToBottom();
-
-    fetchMessages(); // Fetch messages when component mounts
+  fetchMessages(); // Fetch messages when component mounts
 
 }, []);
   // Fetch chat data from the API
   useEffect(() => {
     const fetchChatData = async () => {
       try {
-        const response = await fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBO2RGqggBP2XhFwDkqUnE76bpvhzl40NAr1Op7QlBR8RIAzzvdAPtz9hbhCg4cEYaSIxUfjh8NJh2vzDoSuWvYns8NpHguuX6XjkC9h73RoLV3gRhk4cOTT9nLZAVS1Yetp9AslbinzgFyXHXt6XmMqhAZB1TdHgYcse5Ul0Bww5zR1fGDGTj8uZCxL8yMfr6EUoxCkxzaUP");
+        const response = await fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBOZCElUH2uMp284ojgYZCg7qkCXxzjHbHkmUtn2HTzcvs9DPqesT1ZBkrjHThkZBT2lIVaxXiDuFh0nXdI5P4fAujjJotamY22QebYql4ysBOEwDP6VbxxxRLAAVBgKBD1wk0QZBIUUf3ZATnUkvEKMU4jCEL1lztUgmur2lwZC3gWLMc0EUZC6id1w4qbcNyDzr6sg9SuMhf7Ltv");
         const data = await response.json();
 
         setUserMessages(data.data); // Assuming data.data contains the messages
@@ -188,13 +192,13 @@ console.log(data,'_______data')
         );
 
         setUsers(uniqueUsers); // This should now work correctly
-
+       
         console.log(uniqueUsers, '__________uniqueUsers');
       } catch (error) {
         console.error("Error fetching chat data:", error);
       }
     };
-
+      
     fetchChatData();
   }, [refresh]);
 
