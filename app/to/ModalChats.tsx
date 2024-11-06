@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState,FormEvent } from "react";
+import React, { useEffect, useState,FormEvent, useRef } from "react";
 import { IoIosSend } from "react-icons/io";
 
 interface User {
@@ -35,13 +35,19 @@ const ModalChats: React.FC = () => {
      const [recipientId, setRecipientId] = useState<string >('');
     const [senderName, setSenderName] = useState<string>(""); // State for sender's name
     const [refresh, setRefresh] = useState<boolean>(false);
+    const bottomRef = useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = () => { if (bottomRef.current) { bottomRef.current.scrollIntoView({ behavior: 'smooth' }); } };
 
     const [response, setResponse] = useState<ApiResponse | null>(null);
+
+  
     // Set initial messages state with the provided data
   const [messages, setMessages] = useState<Message[]>([]);
   console.log(messages,'____messages')
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    scrollToBottom();
     setResponse(null);
     setError(null);
 
@@ -99,7 +105,7 @@ const raw = JSON.stringify({
   message: {
     text: "Hello, World!",
   },
-  access_token: "EAAH20PSWGqEBO0Qf0mCW7T4Pr6DlYE8PG3HedSKGtpYcAi76r00ZCwRINySxrj23AY7c7Ow31YuZBcmEowgCYdkA0plbDrIvXlU3GR8ZB9ens2sfBwnxTpQqssKL6d9aehLyiR5psQeEMk2tlyMdFZByvmbz4FiWt2rCOrSfQTTP0FqZCAuqHK5kEgkFJhzT6Nk0ODM3EWNoWIMF5OZBR3UdoZD",
+  access_token: "EAAH20PSWGqEBO8CxZBzyQDZAdWmEd4GE10iQUKOysaqZBl4lff26ncjbTcdPZBxfmWZBBWrvqTdFqM1XJPnvDKDYJySwCdkt36fjmDHtRGj0iKI7MFpXYAVJh73OSXBXsbdwBIDUp0nHJOxl7vqUfY3rOxPgAru7YA4PKFjg4cTVdvISic7VsiYq3O1fVlDeX8XunhRV4phIHyZA3hRVyUS0uP",
 });
 
 const requestOptions = {
@@ -109,7 +115,7 @@ const requestOptions = {
   redirect: "follow",
 };
 
-fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO0Qf0mCW7T4Pr6DlYE8PG3HedSKGtpYcAi76r00ZCwRINySxrj23AY7c7Ow31YuZBcmEowgCYdkA0plbDrIvXlU3GR8ZB9ens2sfBwnxTpQqssKL6d9aehLyiR5psQeEMk2tlyMdFZByvmbz4FiWt2rCOrSfQTTP0FqZCAuqHK5kEgkFJhzT6Nk0ODM3EWNoWIMF5OZBR3UdoZD", requestOptions)
+fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO8CxZBzyQDZAdWmEd4GE10iQUKOysaqZBl4lff26ncjbTcdPZBxfmWZBBWrvqTdFqM1XJPnvDKDYJySwCdkt36fjmDHtRGj0iKI7MFpXYAVJh73OSXBXsbdwBIDUp0nHJOxl7vqUfY3rOxPgAru7YA4PKFjg4cTVdvISic7VsiYq3O1fVlDeX8XunhRV4phIHyZA3hRVyUS0uP", requestOptions)
   .then((response) => response.text())
   .then((result) => console.log(result))
   .catch((error) => console.error("Error:", error));
@@ -123,7 +129,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchChatData = async () => {
       try {
-        const response = await fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBO0Qf0mCW7T4Pr6DlYE8PG3HedSKGtpYcAi76r00ZCwRINySxrj23AY7c7Ow31YuZBcmEowgCYdkA0plbDrIvXlU3GR8ZB9ens2sfBwnxTpQqssKL6d9aehLyiR5psQeEMk2tlyMdFZByvmbz4FiWt2rCOrSfQTTP0FqZCAuqHK5kEgkFJhzT6Nk0ODM3EWNoWIMF5OZBR3UdoZD");
+        const response = await fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBO8CxZBzyQDZAdWmEd4GE10iQUKOysaqZBl4lff26ncjbTcdPZBxfmWZBBWrvqTdFqM1XJPnvDKDYJySwCdkt36fjmDHtRGj0iKI7MFpXYAVJh73OSXBXsbdwBIDUp0nHJOxl7vqUfY3rOxPgAru7YA4PKFjg4cTVdvISic7VsiYq3O1fVlDeX8XunhRV4phIHyZA3hRVyUS0uP");
         const data = await response.json();
         setUserMessages(data.data); // Assuming data.data contains the messages
 console.log(data,'_______data')
@@ -153,7 +159,9 @@ console.log(data,'_______data')
   };
   const renderContactsList = () => {
     // Create a unique list of users based on their IDs, filtering out undefined values
+    scrollToBottom();
     const uniqueUsers = Array.from(
+      
       new Set(
         userMessages?.flatMap((msg) => [
           msg.from.id,
@@ -163,7 +171,7 @@ console.log(data,'_______data')
     )
     .map(userId => users.find(user => user.id === userId))
     .filter((user): user is { id: string; name: string; email: string } => user !== undefined); // Filter out undefined values
-
+  
     return (
       <div className={`h-full ${!isMobileView ? 'md:w-1/3 lg:w-1/4' : ''} rounded bg-gradient-to-t from-black to-slate-500 border-r p-4`}>
         <h3 className="text-xl text-gray-300 font-serif font-bold mb-4">Contacts</h3>
@@ -175,6 +183,8 @@ console.log(data,'_______data')
                 handleRecipientClick(user.id);
                 setRecipientId(user.id);
                 setSenderName(user.name);
+                scrollToBottom();
+              
                 console.log(user, '______________');
               }}
               className={`w-full p-2 text-left rounded-lg flex items-center gap-2 mb-2 ${
@@ -205,18 +215,19 @@ console.log(data,'_______data')
       </div>
 
       <div className="flex-grow overflow-y-auto bg-gray-50">
-        <div className="max-h-[550px] overflow-y-auto p-4"> {/* Set fixed height for messages list */}
+        <div className="max-h-[550px] overflow-y-auto p-4" > {/* Set fixed height for messages list */}
         {userMessages.length ? (
-  <ul className="space-y-3">
+  <ul className="space-y-3" >
     {userMessages
       .filter(msg => msg.from.id === selectedUserId || msg.to.data.some(user => user.id === selectedUserId))
       .sort((a, b) => new Date(a.created_time).getTime() - new Date(b.created_time).getTime()) // Sort by created_time in ascending order
       .map((msg) => (
         <li
+       
           key={msg.id}
           className={`p-3 rounded-lg shadow-md text-gray-800 max-w-xs ${msg.from.id === selectedUserId ? "bg-blue-200 ml-auto text-right" : "bg-white mr-auto"}`}
         >
-          <div>{msg.message}</div>
+          <div ref={bottomRef} >{msg.message}</div>
           <div className="text-xs text-gray-500">{new Date(msg.created_time).toLocaleString()}</div>
         </li>
       ))}
@@ -237,8 +248,11 @@ console.log(data,'_______data')
           className="flex-grow p-2 rounded-lg border focus:outline-none bg-gray-100 focus:ring focus:ring-blue-200 mr-2"
         />
         <button
-                 onClick={handleSubmit}
-
+             onClick={ handleSubmit }
+               
+ 
+               
+                
           className="px-4 py-2 items-center flex gap-2 bg-gray-800 text-white rounded-lg hover:bg-gradient-to-r from-gray-700 via-black to-white"
         >
           <IoIosSend size={20} /> <p>Send</p>
