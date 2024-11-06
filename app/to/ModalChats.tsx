@@ -28,11 +28,13 @@ const ModalChats: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [isMobileView, setIsMobileView] = useState<boolean>(window.innerWidth < 768);
   const [userMessages, setUserMessages] = useState<Message[]>([]); // Store messages for the selected user
+  console.log(userMessages,'________')
   const [users, setUsers] = useState<User[]>([]); // Store user list
   const [error, setError] = useState<string | null>(null);
    const [newMessage, setNewMessage] = useState<string>("");
      const [recipientId, setRecipientId] = useState<string >('');
     const [senderName, setSenderName] = useState<string>(""); // State for sender's name
+    const [refresh, setRefresh] = useState<boolean>(false);
 
     const [response, setResponse] = useState<ApiResponse | null>(null);
     // Set initial messages state with the provided data
@@ -73,7 +75,7 @@ const ModalChats: React.FC = () => {
         const data: ApiResponse = await res.json();
         if (data.success) {
             setMessages(data.messages);
-            
+            setRefresh(!refresh)
         } else {
             setError(data.error);
         }
@@ -97,7 +99,7 @@ const raw = JSON.stringify({
   message: {
     text: "Hello, World!",
   },
-  access_token: "EAAH20PSWGqEBOw2o3nlk9LoakAeuomSDyQ9O70OzfxSeZActrVyVxZCYbmuDp9sUlInm71NU45HGQ6IQa0lEtxfWg0XSEFl1CXG3Pix5GS7xpFas3DIadDUKlb81fJhidd6Gb33yIkc8VYoJDj0GHZCtZAieDluYaEzLd8B9p4JTcCHtLPfzxwjvzaZAwDDaSS2HJrzWImkxmE8vSAFkzy30ZD",
+  access_token: "EAAH20PSWGqEBO88LJg6XDOZBllvPBvSvLpQPndXBVIskgkuBZCFwNxJoPOnVUWufscK7okbICZBSZAdISZCexMkahgHQJZAgIOM393u9MOEQcX3lbZAwXzVl8NTlAYMtFDZACZBU6db0IQZCLIK27EGG3bvMQAgSLdvVqv9tbqtToWMJJmQnZAk9V9qsVwZCpdyxOxItbGPDgvG2Wjnmm1BduFhWpIkZD",
 });
 
 const requestOptions = {
@@ -107,7 +109,7 @@ const requestOptions = {
   redirect: "follow",
 };
 
-fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBOw2o3nlk9LoakAeuomSDyQ9O70OzfxSeZActrVyVxZCYbmuDp9sUlInm71NU45HGQ6IQa0lEtxfWg0XSEFl1CXG3Pix5GS7xpFas3DIadDUKlb81fJhidd6Gb33yIkc8VYoJDj0GHZCtZAieDluYaEzLd8B9p4JTcCHtLPfzxwjvzaZAwDDaSS2HJrzWImkxmE8vSAFkzy30ZD", requestOptions)
+fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO88LJg6XDOZBllvPBvSvLpQPndXBVIskgkuBZCFwNxJoPOnVUWufscK7okbICZBSZAdISZCexMkahgHQJZAgIOM393u9MOEQcX3lbZAwXzVl8NTlAYMtFDZACZBU6db0IQZCLIK27EGG3bvMQAgSLdvVqv9tbqtToWMJJmQnZAk9V9qsVwZCpdyxOxItbGPDgvG2Wjnmm1BduFhWpIkZD", requestOptions)
   .then((response) => response.text())
   .then((result) => console.log(result))
   .catch((error) => console.error("Error:", error));
@@ -121,25 +123,29 @@ useEffect(() => {
   useEffect(() => {
     const fetchChatData = async () => {
       try {
-        const response = await fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBOw2o3nlk9LoakAeuomSDyQ9O70OzfxSeZActrVyVxZCYbmuDp9sUlInm71NU45HGQ6IQa0lEtxfWg0XSEFl1CXG3Pix5GS7xpFas3DIadDUKlb81fJhidd6Gb33yIkc8VYoJDj0GHZCtZAieDluYaEzLd8B9p4JTcCHtLPfzxwjvzaZAwDDaSS2HJrzWImkxmE8vSAFkzy30ZD"); // Replace with your actual API endpoint
+        const response = await fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBO88LJg6XDOZBllvPBvSvLpQPndXBVIskgkuBZCFwNxJoPOnVUWufscK7okbICZBSZAdISZCexMkahgHQJZAgIOM393u9MOEQcX3lbZAwXzVl8NTlAYMtFDZACZBU6db0IQZCLIK27EGG3bvMQAgSLdvVqv9tbqtToWMJJmQnZAk9V9qsVwZCpdyxOxItbGPDgvG2Wjnmm1BduFhWpIkZD");
         const data = await response.json();
         setUserMessages(data.data); // Assuming data.data contains the messages
+console.log(data,'_______data')
         // Create a unique user list from the messages
-        const uniqueUsers = Array.from(
-          new Set(data.data.flatMap((msg: Message) => [
-            { id: msg.from.id, name: msg.from.name, email: msg.from.email },
-            ...msg.to.data.map(user => ({ id: user.id, name: user.name, email: user.email }))
-          ]))
+        const uniqueUsers: User[] = Array.from(
+          new Set<User>(
+            data?.data?.flatMap((msg: Message) => [
+              { id: msg.from.id, name: msg.from.name, email: msg.from.email },
+              ...msg.to.data.map(user => ({ id: user.id, name: user.name, email: user.email }))
+            ])
+          )
         );
-        setUsers(uniqueUsers);
-        console.log(uniqueUsers,'__________uniqueUsers')
+
+        setUsers(uniqueUsers); // This should now work correctly
+        console.log(uniqueUsers, '__________uniqueUsers');
       } catch (error) {
         console.error("Error fetching chat data:", error);
       }
     };
 
     fetchChatData();
-  }, []);
+  }, [refresh]);
 
   // Fetch messages for the selected user
   const handleRecipientClick = (userId: string) => {
@@ -149,7 +155,7 @@ useEffect(() => {
     // Create a unique list of users based on their IDs, filtering out undefined values
     const uniqueUsers = Array.from(
       new Set(
-        userMessages.flatMap((msg) => [
+        userMessages?.flatMap((msg) => [
           msg.from.id,
           ...msg.to.data.map(user => user.id)
         ])
