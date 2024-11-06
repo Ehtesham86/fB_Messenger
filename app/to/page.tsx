@@ -10,6 +10,7 @@ const To: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
 
   useEffect(() => {
+    console.log(window,'_______window')
     // Run on client only and set initial value for mobile view
     setIsMobileView(window.innerWidth < 768);
 
