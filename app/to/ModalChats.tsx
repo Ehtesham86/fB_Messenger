@@ -56,8 +56,9 @@ const ModalChats: React.FC = () => {
 
         const data: ApiResponse = await res.json();
         setResponse(data);
+
         if (data.success) {
-            setMessage(''); // Clear the input after sending
+            setMessage(""); // Clear the input after sending
              fetchMessages(); // Refresh the message list after sending
         }
     } catch (error: any) {
@@ -96,7 +97,7 @@ const raw = JSON.stringify({
   message: {
     text: "Hello, World!",
   },
-  access_token: "EAAH20PSWGqEBO4ofnp0hgYggpkLdHEkQy8UvZATbfA1fhs1VNoX2y8pvZACEvcw6XhDPR8peVlHeqCpi92SOahChM0bY0RAvqggRG6XL266nahszr2527HIGBcF57kTbAUoTctwqZBFBTNZCRa2SOxQeUYU3MHLGvmidW39vani4uMrClwflQyCL8y1ZC81kHZArgHMA4dVOZAyNZAFZBsWoItNQZD",
+  access_token: "EAAH20PSWGqEBOw2o3nlk9LoakAeuomSDyQ9O70OzfxSeZActrVyVxZCYbmuDp9sUlInm71NU45HGQ6IQa0lEtxfWg0XSEFl1CXG3Pix5GS7xpFas3DIadDUKlb81fJhidd6Gb33yIkc8VYoJDj0GHZCtZAieDluYaEzLd8B9p4JTcCHtLPfzxwjvzaZAwDDaSS2HJrzWImkxmE8vSAFkzy30ZD",
 });
 
 const requestOptions = {
@@ -106,7 +107,7 @@ const requestOptions = {
   redirect: "follow",
 };
 
-fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO4ofnp0hgYggpkLdHEkQy8UvZATbfA1fhs1VNoX2y8pvZACEvcw6XhDPR8peVlHeqCpi92SOahChM0bY0RAvqggRG6XL266nahszr2527HIGBcF57kTbAUoTctwqZBFBTNZCRa2SOxQeUYU3MHLGvmidW39vani4uMrClwflQyCL8y1ZC81kHZArgHMA4dVOZAyNZAFZBsWoItNQZD", requestOptions)
+fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBOw2o3nlk9LoakAeuomSDyQ9O70OzfxSeZActrVyVxZCYbmuDp9sUlInm71NU45HGQ6IQa0lEtxfWg0XSEFl1CXG3Pix5GS7xpFas3DIadDUKlb81fJhidd6Gb33yIkc8VYoJDj0GHZCtZAieDluYaEzLd8B9p4JTcCHtLPfzxwjvzaZAwDDaSS2HJrzWImkxmE8vSAFkzy30ZD", requestOptions)
   .then((response) => response.text())
   .then((result) => console.log(result))
   .catch((error) => console.error("Error:", error));
@@ -120,7 +121,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchChatData = async () => {
       try {
-        const response = await fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBO4ofnp0hgYggpkLdHEkQy8UvZATbfA1fhs1VNoX2y8pvZACEvcw6XhDPR8peVlHeqCpi92SOahChM0bY0RAvqggRG6XL266nahszr2527HIGBcF57kTbAUoTctwqZBFBTNZCRa2SOxQeUYU3MHLGvmidW39vani4uMrClwflQyCL8y1ZC81kHZArgHMA4dVOZAyNZAFZBsWoItNQZD"); // Replace with your actual API endpoint
+        const response = await fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBOw2o3nlk9LoakAeuomSDyQ9O70OzfxSeZActrVyVxZCYbmuDp9sUlInm71NU45HGQ6IQa0lEtxfWg0XSEFl1CXG3Pix5GS7xpFas3DIadDUKlb81fJhidd6Gb33yIkc8VYoJDj0GHZCtZAieDluYaEzLd8B9p4JTcCHtLPfzxwjvzaZAwDDaSS2HJrzWImkxmE8vSAFkzy30ZD"); // Replace with your actual API endpoint
         const data = await response.json();
         setUserMessages(data.data); // Assuming data.data contains the messages
         // Create a unique user list from the messages
@@ -131,6 +132,7 @@ useEffect(() => {
           ]))
         );
         setUsers(uniqueUsers);
+        console.log(uniqueUsers,'__________uniqueUsers')
       } catch (error) {
         console.error("Error fetching chat data:", error);
       }
@@ -160,7 +162,7 @@ useEffect(() => {
       <div className={`h-full ${!isMobileView ? 'md:w-1/3 lg:w-1/4' : ''} rounded bg-gradient-to-t from-black to-slate-500 border-r p-4`}>
         <h3 className="text-xl text-gray-300 font-serif font-bold mb-4">Contacts</h3>
         <div className="overflow-y-auto h-[600px]"> {/* Fixed height for contact list with scroll if needed */}
-          {uniqueUsers.map((user) => (
+          {uniqueUsers.filter(user => user.name.toLowerCase() !== "abc").map((user) => (
             <button
               key={user.id}
               onClick={() => {
@@ -198,23 +200,25 @@ useEffect(() => {
 
       <div className="flex-grow overflow-y-auto bg-gray-50">
         <div className="max-h-[550px] overflow-y-auto p-4"> {/* Set fixed height for messages list */}
-          {userMessages.length ? (
-            <ul className="space-y-3">
-              {userMessages
-                .filter(msg => msg.from.id === selectedUserId || msg.to.data.some(user => user.id === selectedUserId))
-                .map((msg) => (
-                  <li
-                    key={msg.id}
-                    className={`p-3 rounded-lg shadow-md text-gray-800 max-w-xs ${msg.from.id === selectedUserId ? "bg-blue-200 ml-auto text-right" : "bg-white mr-auto"}`}
-                  >
-                    <div>{msg.message}</div>
-                    <div className="text-xs text-gray-500">{new Date(msg.created_time).toLocaleString()}</div>
-                  </li>
-                ))}
-            </ul>
-          ) : (
-            <p className="text-center text-gray-600">No messages with this user.</p>
-          )}
+        {userMessages.length ? (
+  <ul className="space-y-3">
+    {userMessages
+      .filter(msg => msg.from.id === selectedUserId || msg.to.data.some(user => user.id === selectedUserId))
+      .sort((a, b) => new Date(a.created_time).getTime() - new Date(b.created_time).getTime()) // Sort by created_time in ascending order
+      .map((msg) => (
+        <li
+          key={msg.id}
+          className={`p-3 rounded-lg shadow-md text-gray-800 max-w-xs ${msg.from.id === selectedUserId ? "bg-blue-200 ml-auto text-right" : "bg-white mr-auto"}`}
+        >
+          <div>{msg.message}</div>
+          <div className="text-xs text-gray-500">{new Date(msg.created_time).toLocaleString()}</div>
+        </li>
+      ))}
+  </ul>
+) : (
+  <p className="text-center text-gray-600">No messages with this user.</p>
+)}
+
         </div>
       </div>
 
