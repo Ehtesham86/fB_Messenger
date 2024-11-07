@@ -58,112 +58,116 @@ const EmailForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-semibold text-center text-gray-700 mb-4">Send Email</h2>
-        <Formik
-          initialValues={{ subject: "", text: "", files: [] }}
-          validationSchema={validationSchema}
-          onSubmit={(values, { setSubmitting }) => {
-            const allEmails = emailInput.trim()
-              ? [...emails, emailInput.trim()]
-              : emails;
+    <div className="md:min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+      <h2 className="text-2xl font-semibold text-center text-gray-700 mb-4">
+        Send Email
+      </h2>
+      <Formik
+        initialValues={{ subject: "", text: "", files: [] }}
+        validationSchema={validationSchema}
+        onSubmit={(values, { setSubmitting }) => {
+          const allEmails = emailInput.trim()
+            ? [...emails, emailInput.trim()]
+            : emails;
 
-            if (allEmails.length === 0) {
-              alert("Please enter at least one email address.");
-              setSubmitting(false);
-              return;
-            }
-
-            sendEmail(allEmails, values.subject, values.text, values.files);
+          if (allEmails.length === 0) {
+            alert("Please enter at least one email address.");
             setSubmitting(false);
-          }}
-        >
-          {({ setFieldValue, isSubmitting }) => (
-            <Form>
-              <div className="mb-4">
-                <label className="block text-gray-600 font-medium mb-2">To</label>
-                <div className="flex items-center border border-gray-300 rounded-md p-2">
-                  {emails.map((email, index) => (
-                    <span
-                      key={index}
-                      className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full mr-2 flex items-center"
+            return;
+          }
+
+          sendEmail(allEmails, values.subject, values.text, values.files);
+          setSubmitting(false);
+        }}
+      >
+        {({ setFieldValue, isSubmitting }) => (
+          <Form>
+            <div className="mb-4">
+              <label className="block text-gray-600 font-medium mb-2">To</label>
+              <div className="flex flex-wrap items-center border border-gray-300 rounded-md p-2">
+                {emails.map((email, index) => (
+                  <span
+                    key={index}
+                    className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full mr-2 mb-2 flex items-center"
+                  >
+                    {email}
+                    <button
+                      type="button"
+                      onClick={() => removeEmail(index)}
+                      className="ml-2 text-red-500"
                     >
-                      {email}
-                      <button
-                        type="button"
-                        onClick={() => removeEmail(index)}
-                        className="ml-2 text-red-500"
-                      >
-                        &times;
-                      </button>
-                    </span>
-                  ))}
-                  <input
-                    type="text"
-                    placeholder="Enter email and press Enter"
-                    value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
-                    onKeyDown={addEmail}
-                    className="outline-none text-black flex-grow bg-transparent"
-                  />
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-gray-600 font-medium mb-2" htmlFor="subject">
-                  Subject
-                </label>
-                <Field
-                  name="subject"
-                  type="text"
-                  className="w-full px-4 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                />
-                <ErrorMessage name="subject" component="div" className="text-red-500 text-sm mt-1" />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-gray-600 font-medium mb-2" htmlFor="text">
-                  Message
-                </label>
-                <Field
-                  name="text"
-                  as="textarea"
-                  rows="6"
-                  className="w-full px-4 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                />
-                <ErrorMessage name="text" component="div" className="text-red-500 text-sm mt-1" />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-gray-600 font-medium mb-2" htmlFor="files">Upload Files</label>
+                      &times;
+                    </button>
+                  </span>
+                ))}
                 <input
-                  type="file"
-                  name="files"
-                  onChange={(event) => {
-                    const files = event.currentTarget.files;
-                    if (files) {
-                      setFieldValue("files", Array.from(files));
-                    }
-                  }}
-                  className="w-full border border-gray-300 rounded-md p-2"
-                  multiple
+                  type="text"
+                  placeholder="Enter email and press Enter"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  onKeyDown={addEmail}
+                  className="outline-none text-black flex-grow bg-transparent mb-2"
                 />
-                <ErrorMessage name="files" component="div" className="text-red-500 text-sm mt-1" />
               </div>
-              <button
-                type="submit"
-                disabled={isSubmitting || (emails.length === 0 && emailInput.trim() === "")}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md transition-colors"
-              >
-                {isSubmitting ? "Sending..." : "Send Email"}
-              </button>
-            </Form>
-          )}
-        </Formik>
-      </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-600 font-medium mb-2" htmlFor="subject">
+                Subject
+              </label>
+              <Field
+                name="subject"
+                type="text"
+                className="w-full px-4 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              />
+              <ErrorMessage name="subject" component="div" className="text-red-500 text-sm mt-1" />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-600 font-medium mb-2" htmlFor="text">
+                Message
+              </label>
+              <Field
+                name="text"
+                as="textarea"
+                rows="6"
+                className="w-full px-4 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              />
+              <ErrorMessage name="text" component="div" className="text-red-500 text-sm mt-1" />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-600 font-medium mb-2" htmlFor="files">
+                Upload Files
+              </label>
+              <input
+                type="file"
+                name="files"
+                onChange={(event) => {
+                  const files = event.currentTarget.files;
+                  if (files) {
+                    setFieldValue("files", Array.from(files));
+                  }
+                }}
+                className="w-full border border-gray-300 rounded-md p-2"
+                multiple
+              />
+              <ErrorMessage name="files" component="div" className="text-red-500 text-sm mt-1" />
+            </div>
+            <button
+              type="submit"
+              disabled={isSubmitting || (emails.length === 0 && emailInput.trim() === "")}
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md transition-colors"
+            >
+              {isSubmitting ? "Sending..." : "Send Email"}
+            </button>
+          </Form>
+        )}
+      </Formik>
     </div>
-  );
+  </div>
+);
 };
 
 const validateEmail = (email:string) => {

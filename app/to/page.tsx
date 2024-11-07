@@ -27,18 +27,21 @@ const To: React.FC = () => {
     <>
       <button
         onClick={toggleModal}
-        className="block text-white md:mt-[500%] bg-gray-800 hover:bg-gray-600 focus:ring-4 md:ml-[90%] focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        className="block text-white md:mt-[20%] bg-gray-800 hover:bg-gray-600 focus:ring-4 md:ml-[90%] focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         type="button"
       >
        <SiMessenger size={35} />
       </button>
-
+     
       {isOpen && (
         <div
           tabIndex={-1}
           aria-hidden={!isOpen}
-          className="fixed inset-0 z-50 flex items-center p-5 justify-center overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center p-5  justify-center overflow-y-auto"
         >
+
+              
+
           <div className={`relative ${isMobileView ? 'mt-2' : 'mt-0'} w-full max-w-xl`}>
             <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
