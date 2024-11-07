@@ -4,16 +4,21 @@ import React, { useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-const sendEmail = async (emails: string[], subject: string, text: string) => {
+const sendEmail = async (emails:any, subject:string, text:string, files:any) => {
   try {
+    const formData = new FormData();
+    formData.append("to", emails);
+    formData.append("subject", subject);
+    formData.append("text", text);
+    
+    // Append each file to the formData
+    files.forEach((file:any, index:any) => {
+      formData.append(`files`, file);
+    });
+
     const response = await fetch("/api/sendEmail", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        to: emails,
-        subject,
-        text,
-      }),
+      body: formData, // Use formData directly as the body
     });
 
     if (!response.ok) {
@@ -34,9 +39,9 @@ const validationSchema = Yup.object({
 
 const EmailForm = () => {
   const [emails, setEmails] = useState<string[]>([]);
-  const [emailInput, setEmailInput] = useState("");
+  const [emailInput, setEmailInput] = useState<string>("");
 
-  const addEmail = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const addEmail = (e:any) => {
     if (e.key === "Enter" && emailInput.trim() !== "") {
       e.preventDefault();
       if (validateEmail(emailInput.trim())) {
@@ -48,16 +53,16 @@ const EmailForm = () => {
     }
   };
 
-  const removeEmail = (index: number) => {
+  const removeEmail = (index:any) => {
     setEmails(emails.filter((_, i) => i !== index));
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg">
+      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
         <h2 className="text-2xl font-semibold text-center text-gray-700 mb-4">Send Email</h2>
         <Formik
-          initialValues={{ subject: "", text: "" }}
+          initialValues={{ subject: "", text: "", files: [] }}
           validationSchema={validationSchema}
           onSubmit={(values, { setSubmitting }) => {
             const allEmails = emailInput.trim()
@@ -70,19 +75,19 @@ const EmailForm = () => {
               return;
             }
 
-            sendEmail(allEmails, values.subject, values.text);
+            sendEmail(allEmails, values.subject, values.text, values.files);
             setSubmitting(false);
           }}
         >
-          {({ isSubmitting }) => (
+          {({ setFieldValue, isSubmitting }) => (
             <Form>
               <div className="mb-4">
                 <label className="block text-gray-600 font-medium mb-2">To</label>
-                <div className="flex flex-wrap items-center border border-gray-300 rounded-md p-2 mb-3">
+                <div className="flex items-center border border-gray-300 rounded-md p-2">
                   {emails.map((email, index) => (
                     <span
                       key={index}
-                      className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full mr-2 mb-2 flex items-center"
+                      className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full mr-2 flex items-center"
                     >
                       {email}
                       <button
@@ -130,6 +135,22 @@ const EmailForm = () => {
                 <ErrorMessage name="text" component="div" className="text-red-500 text-sm mt-1" />
               </div>
 
+              <div className="mb-4">
+                <label className="block text-gray-600 font-medium mb-2" htmlFor="files">Upload Files</label>
+                <input
+                  type="file"
+                  name="files"
+                  onChange={(event) => {
+                    const files = event.currentTarget.files;
+                    if (files) {
+                      setFieldValue("files", Array.from(files));
+                    }
+                  }}
+                  className="w-full border border-gray-300 rounded-md p-2"
+                  multiple
+                />
+                <ErrorMessage name="files" component="div" className="text-red-500 text-sm mt-1" />
+              </div>
               <button
                 type="submit"
                 disabled={isSubmitting || (emails.length === 0 && emailInput.trim() === "")}
@@ -145,7 +166,7 @@ const EmailForm = () => {
   );
 };
 
-const validateEmail = (email: string) => {
+const validateEmail = (email:string) => {
   const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
   return emailRegex.test(email);
 };
