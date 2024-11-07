@@ -54,7 +54,7 @@ const EmailForm = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg">
+      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
         <h2 className="text-2xl font-semibold text-center text-gray-700 mb-4">Send Email</h2>
         <Formik
           initialValues={{ subject: "", text: "" }}
@@ -78,11 +78,11 @@ const EmailForm = () => {
             <Form>
               <div className="mb-4">
                 <label className="block text-gray-600 font-medium mb-2">To</label>
-                <div className="flex flex-wrap items-center border border-gray-300 rounded-md p-2 mb-3">
+                <div className="flex items-center border border-gray-300 rounded-md p-2">
                   {emails.map((email, index) => (
                     <span
                       key={index}
-                      className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full mr-2 mb-2 flex items-center"
+                      className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full mr-2 flex items-center"
                     >
                       {email}
                       <button
