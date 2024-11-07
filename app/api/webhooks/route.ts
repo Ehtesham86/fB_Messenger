@@ -1,12 +1,7 @@
 import Stripe from 'stripe';
 import { stripe } from '@/utils/stripe/config';
-import {
-  upsertProductRecord,
-  upsertPriceRecord,
-  manageSubscriptionStatusChange,
-  deleteProductRecord,
-  deletePriceRecord
-} from '@/utils/supabase/admin';
+import { Server } from 'socket.io';
+import { upsertProductRecord, upsertPriceRecord, manageSubscriptionStatusChange, deleteProductRecord, deletePriceRecord } from '@/utils/supabase/admin';
 
 const relevantEvents = new Set([
   'product.created',
@@ -92,5 +87,10 @@ export async function POST(req: Request) {
       status: 400
     });
   }
+
+  // Emit the received message or event data to the Socket.io server
+  const io = new Server(4000);
+  io.emit("new_message", event.data); // Send the event data to all connected clients
+
   return new Response(JSON.stringify({ received: true }));
 }

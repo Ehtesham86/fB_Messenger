@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState,FormEvent, useRef } from "react";
 import { IoIosSend } from "react-icons/io";
+import { io } from 'socket.io-client';
 
+const SOCKET_URL = 'http://localhost:4000'; // Socket.io server URL
 interface User {
   id: string; // Use string for user IDs as per your API response
   name: string;
@@ -45,6 +47,38 @@ const ModalChats: React.FC = () => {
     // Set initial messages state with the provided data
   const [messages, setMessages] = useState<Message[]>([]);
   console.log(messages,'____messages')
+  useEffect(() => {
+    const socket = io(SOCKET_URL, { transports: ["websocket"] });
+
+    // Listen for new messages and update state
+    socket.on("new_message", (newMessage) => {
+      console.log("New message received:", newMessage);
+      setUserMessages((prevMessages) => [...prevMessages, newMessage]);
+
+      // Extract unique users from the new message
+      const uniqueUsers: User[] = Array.from(
+        new Set(
+          newMessage.flatMap((msg: { from: User; to: { data: User[] } }) => [
+            { id: msg.from.id, name: msg.from.name, email: msg.from.email },
+            ...msg.to.data.map((user) => ({
+              id: user.id,
+              name: user.name,
+              email: user.email,
+            })),
+          ])
+        )
+      ) as User[];
+      scrollToBottom();
+
+      setUsers(uniqueUsers);
+    });
+
+    // Clean up socket connection on component unmount
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     scrollToBottom();
@@ -66,6 +100,8 @@ const ModalChats: React.FC = () => {
         setResponse(data);
 
         if (data.success) {
+        scrollToBottom();
+
             setMessage(""); // Clear the input after sending
              fetchMessages(); // Refresh the message list after sending
         }
@@ -74,6 +110,8 @@ const ModalChats: React.FC = () => {
     }
 };
   const fetchMessages = async () => {
+    scrollToBottom();
+
     try {
         const res = await fetch('/api/sendMessage'); // Call the GET API
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -81,6 +119,7 @@ const ModalChats: React.FC = () => {
         const data: ApiResponse = await res.json();
         if (data.success) {
             setMessages(data.messages);
+            
             setRefresh(!refresh)
         } else {
             setError(data.error);
@@ -105,7 +144,7 @@ const raw = JSON.stringify({
   message: {
     text: "Hello, World!",
   },
-  access_token: "EAAH20PSWGqEBO8CxZBzyQDZAdWmEd4GE10iQUKOysaqZBl4lff26ncjbTcdPZBxfmWZBBWrvqTdFqM1XJPnvDKDYJySwCdkt36fjmDHtRGj0iKI7MFpXYAVJh73OSXBXsbdwBIDUp0nHJOxl7vqUfY3rOxPgAru7YA4PKFjg4cTVdvISic7VsiYq3O1fVlDeX8XunhRV4phIHyZA3hRVyUS0uP",
+  access_token: "EAAH20PSWGqEBO2RGqggBP2XhFwDkqUnE76bpvhzl40NAr1Op7QlBR8RIAzzvdAPtz9hbhCg4cEYaSIxUfjh8NJh2vzDoSuWvYns8NpHguuX6XjkC9h73RoLV3gRhk4cOTT9nLZAVS1Yetp9AslbinzgFyXHXt6XmMqhAZB1TdHgYcse5Ul0Bww5zR1fGDGTj8uZCxL8yMfr6EUoxCkxzaUP",
 });
 
 const requestOptions = {
@@ -115,7 +154,7 @@ const requestOptions = {
   redirect: "follow",
 };
 
-fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO8CxZBzyQDZAdWmEd4GE10iQUKOysaqZBl4lff26ncjbTcdPZBxfmWZBBWrvqTdFqM1XJPnvDKDYJySwCdkt36fjmDHtRGj0iKI7MFpXYAVJh73OSXBXsbdwBIDUp0nHJOxl7vqUfY3rOxPgAru7YA4PKFjg4cTVdvISic7VsiYq3O1fVlDeX8XunhRV4phIHyZA3hRVyUS0uP", requestOptions)
+fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO2RGqggBP2XhFwDkqUnE76bpvhzl40NAr1Op7QlBR8RIAzzvdAPtz9hbhCg4cEYaSIxUfjh8NJh2vzDoSuWvYns8NpHguuX6XjkC9h73RoLV3gRhk4cOTT9nLZAVS1Yetp9AslbinzgFyXHXt6XmMqhAZB1TdHgYcse5Ul0Bww5zR1fGDGTj8uZCxL8yMfr6EUoxCkxzaUP", requestOptions)
   .then((response) => response.text())
   .then((result) => console.log(result))
   .catch((error) => console.error("Error:", error));
@@ -123,16 +162,21 @@ fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EA
 
  
 useEffect(() => {
+  scrollToBottom();
+
     fetchMessages(); // Fetch messages when component mounts
+
 }, []);
   // Fetch chat data from the API
   useEffect(() => {
     const fetchChatData = async () => {
       try {
-        const response = await fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBO8CxZBzyQDZAdWmEd4GE10iQUKOysaqZBl4lff26ncjbTcdPZBxfmWZBBWrvqTdFqM1XJPnvDKDYJySwCdkt36fjmDHtRGj0iKI7MFpXYAVJh73OSXBXsbdwBIDUp0nHJOxl7vqUfY3rOxPgAru7YA4PKFjg4cTVdvISic7VsiYq3O1fVlDeX8XunhRV4phIHyZA3hRVyUS0uP");
+        const response = await fetch("https://graph.facebook.com/v21.0/t_1724369945082697/messages?fields=message,created_time,from,to&access_token=EAAH20PSWGqEBO2RGqggBP2XhFwDkqUnE76bpvhzl40NAr1Op7QlBR8RIAzzvdAPtz9hbhCg4cEYaSIxUfjh8NJh2vzDoSuWvYns8NpHguuX6XjkC9h73RoLV3gRhk4cOTT9nLZAVS1Yetp9AslbinzgFyXHXt6XmMqhAZB1TdHgYcse5Ul0Bww5zR1fGDGTj8uZCxL8yMfr6EUoxCkxzaUP");
         const data = await response.json();
+
         setUserMessages(data.data); // Assuming data.data contains the messages
 console.log(data,'_______data')
+
         // Create a unique user list from the messages
         const uniqueUsers: User[] = Array.from(
           new Set<User>(
@@ -144,6 +188,7 @@ console.log(data,'_______data')
         );
 
         setUsers(uniqueUsers); // This should now work correctly
+
         console.log(uniqueUsers, '__________uniqueUsers');
       } catch (error) {
         console.error("Error fetching chat data:", error);
