@@ -29,7 +29,7 @@ export async function POST(req) {
     );
 
     const mailOptions = {
-      from: "ehteshambutt58@gmail.com",
+      from: "sardarsami12221@gmail.com",
       to: emailRecipients, // Use array of recipients
       subject: subject,
       text: text,
