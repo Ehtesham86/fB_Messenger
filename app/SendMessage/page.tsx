@@ -4,8 +4,8 @@ import { useEffect, useState, FormEvent } from 'react';
 
 interface ApiResponse {
     success: boolean;
-    data?: any; // You can specify the type based on your response structure
-    error?: any; // You can specify the type based on your error structure
+    messages?: Message[]; // Add the messages property with the correct type
+    error?: any;
 }
 
 interface Message {
@@ -13,8 +13,8 @@ interface Message {
     text: string;
     created_at: string;
     recipient_id: string;
-    sender_name: string; // Add sender name to the Message interface
-    recipients:any
+    sender_name: string;
+    recipients: any;
 }
 
 function SendMessage() {
@@ -32,7 +32,7 @@ function SendMessage() {
 
             const data: ApiResponse = await res.json();
             if (data.success) {
-                setMessages(data.messages);
+                setMessages(data.messages || []); // Use fallback empty array if messages is undefined
             } else {
                 setError(data.error);
             }
@@ -41,11 +41,10 @@ function SendMessage() {
         }
     };
 
-
-
     useEffect(() => {
         fetchMessages(); // Fetch messages when component mounts
     }, []);
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setResponse(null);
@@ -73,6 +72,7 @@ function SendMessage() {
             setError(error.message);
         }
     };
+
     return (
         <div style={{ padding: '20px' }}>
             <h1>Chat</h1>
