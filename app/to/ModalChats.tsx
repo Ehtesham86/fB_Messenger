@@ -155,7 +155,7 @@ const requestOptions = {
   method: "POST",
   headers: myHeaders,
   body: raw,
-  redirect: "follow",
+  redirect: "follow" as RequestRedirect,  // Explicit cast to RequestRedirect type
 };
 
 fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO89p8ZAztPV6WlF3ceZB9Mc2m0YMR9OUql8vtlGZBUANm519Q3MEs5WNbdNC90tmrZB4ornAg9UYD8ZCQ9lvgza6YJNrfCh88W839YkEctNqeqIXwY4XlbtjhLymIu2qmvRjshHpJhC2VLOtHGi70Ts7nvsrbKy70tdEdXhQnix9ZBaR6PWt0ZD", requestOptions)
