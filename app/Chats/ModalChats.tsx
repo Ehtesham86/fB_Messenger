@@ -81,7 +81,7 @@ const sendMessage = () => {
     method: "POST",
     headers: myHeaders,
     body: raw,
-    redirect: "follow",
+    redirect: "follow" as RequestRedirect, // Fix: Cast to the correct type
   };
 
   fetch("https://graph.facebook.com/v13.0/110689178427068/messages?access_token=EAAH20PSWGqEBO4ofnp0hgYggpkLdHEkQy8UvZATbfA1fhs1VNoX2y8pvZACEvcw6XhDPR8peVlHeqCpi92SOahChM0bY0RAvqggRG6XL266nahszr2527HIGBcF57kTbAUoTctwqZBFBTNZCRa2SOxQeUYU3MHLGvmidW39vani4uMrClwflQyCL8y1ZC81kHZArgHMA4dVOZAyNZAFZBsWoItNQZD", requestOptions)
@@ -89,6 +89,7 @@ const sendMessage = () => {
     .then((result) => console.log(result))
     .catch((error) => console.error("Error:", error));
 };
+
 
   // State to track selected user and new message text
 
