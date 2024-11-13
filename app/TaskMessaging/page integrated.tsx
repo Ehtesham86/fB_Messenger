@@ -8,6 +8,8 @@ let socket: Socket;
 interface Contact {
   id: number;
   name: string;
+  full_name: string; // Add the full_name property here
+
 }
 
 const ChatComponent = () => {
