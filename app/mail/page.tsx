@@ -5,7 +5,7 @@ import { useState } from "react";
 import { RiMenuFold2Fill, RiMenuFold3Fill } from "react-icons/ri"; // Import react-icons
 
 import { FaPen } from "react-icons/fa";
-import Modalmail from "./Modalmail";
+import Modalmail from "../mails/Modalmail";
 
 
 interface ModalProps {
