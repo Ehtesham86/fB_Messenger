@@ -183,10 +183,10 @@ export async function signUp(formData: FormData) {
   const supabase = createClient();
   const { error, data } = await supabase.auth.signUp({
     email,
-    full_name,
     password,
     options: {
-      emailRedirectTo: callbackURL
+      emailRedirectTo: callbackURL,
+      data: { full_name }  // Adding full_name here inside 'data' object
     }
   });
 
@@ -313,27 +313,11 @@ export async function updateName(formData: FormData) {
   const fullName = String(formData.get('fullName')).trim();
 
   const supabase = createClient();
-  const { error, data } = await supabase.auth.updateUser({
-    data: { full_name: fullName }
-  });
+  const { error } = await supabase.auth.updateUser({ data: { full_name: fullName } });
 
   if (error) {
-    return getErrorRedirect(
-      '/account',
-      'Your name could not be updated.',
-      error.message
-    );
-  } else if (data.user) {
-    return getStatusRedirect(
-      '/account',
-      'Success!',
-      'Your name has been updated.'
-    );
+    return getErrorRedirect('/account', 'Could not update your name.', error.message);
   } else {
-    return getErrorRedirect(
-      '/account',
-      'Hmm... Something went wrong.',
-      'Your name could not be updated.'
-    );
+    return getStatusRedirect('/account', 'Success!', 'Your name has been updated.');
   }
 }
