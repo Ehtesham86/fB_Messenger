@@ -26,7 +26,7 @@ export default function Navlinks({ user }: NavlinksProps) {
   };
 
   return (
-    <div className="relative flex flex-row justify-between py-4 align-center md:py-6">
+    <div className="relative w-full flex flex-row justify-between py-4 align-center md:py-6">
       {/* Logo Section */}
       <div className="flex items-center flex-1">
         <Link href="/" className={s.logo} aria-label="Logo">
@@ -50,7 +50,7 @@ export default function Navlinks({ user }: NavlinksProps) {
         <nav
           className={`${
             isMenuOpen ? 'block' : 'hidden'
-          } absolute top-full left-0 w-full bg-black text-gray-400 shadow-lg space-y-4 p-4 lg:static lg:block lg:bg-transparent lg:shadow-none lg:w-auto lg:space-y-0 lg:space-x-2 lg:flex`}
+          } absolute top-full left-0 w-full bg-black text-gray-400 shadow-lg space-y-4 p-4 lg:static  lg:bg-transparent lg:shadow-none lg:w-auto lg:space-y-0 lg:space-x-2 lg:flex`}
         >
           <Link href="/" className={s.link}>
             Home
@@ -75,11 +75,39 @@ export default function Navlinks({ user }: NavlinksProps) {
               Email
             </Link>
           )}
+           {user && (
+            <Link href="/SendMessage" className={s.link}>
+              SendMessage
+            </Link>
+          )}
+           {user && (
+            <Link href="/mailchimp" className={s.link}>
+             mailchimp
+            </Link>
+          )}
+           {user && (
+            <Link href="/authmailchimp" className={s.link}>
+           authmailchimp
+            </Link>
+          )}
+           {user && (
+            <Link href="/CallbackPage" className={s.link}>
+          CallbackPage
+            </Link>
+          )}
+          {user && (
+            <Link href="/SubscribeButton" className={s.link}>
+              SubscribeButton            </Link>
+          )}
+           {user && (
+            <Link href="/testown" className={s.link}>
+              testown            </Link>
+          )}
         </nav>
       </div>
 
       {/* Sign In / Sign Out Section */}
-      <div className="flex justify-end space-x-8">
+      <div className="flex justify-end  ml-[10%] space-x-8">
         {user ? (
           <form onSubmit={(e) => handleRequest(e, SignOut, router)}>
             <input type="hidden" name="pathName" value={usePathname()} />
