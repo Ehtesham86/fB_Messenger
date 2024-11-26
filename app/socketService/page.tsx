@@ -1,3 +1,4 @@
+// socketService.ts
 import { io, Socket } from 'socket.io-client';
 
 let socket: Socket; // Declare the socket variable
@@ -15,3 +16,5 @@ export const initializeSocket = () => {
 
   return socket;
 };
+
+export const getSocket = () => socket; // Export a method to access the socket
