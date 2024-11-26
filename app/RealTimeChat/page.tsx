@@ -27,7 +27,7 @@ const RealTimeChat: React.FC = () => {
     const fetchMessages = async () => {
       try {
         const { data } = await axios.get(
-          'http://localhost:3000/api/receive-message?id=08710c56-5de1-4452-b7af-4f06bfcb2096'
+          `${process.env.NEXT_PUBLIC_SITE_URL}/api/receive-message?id=08710c56-5de1-4452-b7af-4f06bfcb2096`
         );
         setReceivedMessages(data.messages); // Access the "messages" array from the response
       } catch (error) {
@@ -81,7 +81,7 @@ const RealTimeChat: React.FC = () => {
 
       try {
         // Call the API with the payload
-        const response = await axios.post('http://localhost:3000/api/receive-message', {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/receive-message`, {
           id: senderId,
           message,
         });
