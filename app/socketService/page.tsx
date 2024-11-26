@@ -1,4 +1,4 @@
-// app/socketService/page.tsx
+"use client"
 import { useEffect } from 'react';
 import { initializeSocket } from './socketService'; // Import the socket initialization
 
