@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import { AiOutlineExclamationCircle } from 'react-icons/ai';
-import Mailchimp from '../Mailchimp/page';  
+// import Mailchimp from '../Mailchimp/page';  
 
 const integrations = [
   { name: 'Mailchimp', logo: '/logos/mailchimp.png' },
@@ -75,7 +75,7 @@ const MailchimpForm: React.FC = () => {
                 >
                   &times;
                 </button>
-                <Mailchimp closeModal={closeModal} />
+                {/* <Mailchimp closeModal={closeModal} /> */}
               </div>
             </div>
           )}
