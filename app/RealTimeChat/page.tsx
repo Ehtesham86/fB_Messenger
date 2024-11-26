@@ -6,7 +6,7 @@ import axios from 'axios';
 import { io, Socket } from 'socket.io-client';
 let socket: Socket; // Declare the socket variable
 
-import { initializeSocket } from '../socketService/page'; // Import the initialization function
+import { initializeSocket } from '../socketService/socketService';  // Import the initialization function
 
 const RealTimeChat: React.FC = () => {
   const [message, setMessage] = useState<string>('');

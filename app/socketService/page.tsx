@@ -1,20 +1,24 @@
-// socketService.ts
-import { io, Socket } from 'socket.io-client';
+// app/socketService/page.tsx
+import { useEffect } from 'react';
+import { initializeSocket } from './socketService'; // Import the socket initialization
 
-let socket: Socket; // Declare the socket variable
+const SocketPage = () => {
+  useEffect(() => {
+    const socket = initializeSocket(); // Initialize the socket when the component mounts
 
-export const initializeSocket = () => {
-  socket = io('http://localhost:3000'); // Replace with your server URL
+    // Clean up the socket connection when the component unmounts
+    return () => {
+      socket.disconnect();
+      console.log('Socket disconnected');
+    };
+  }, []);
 
-  socket.on('connect', () => {
-    console.log('Socket connected:', socket.id);
-  });
-
-  socket.on('connect_error', (err) => {
-    console.error('Socket connection error:', err);
-  });
-
-  return socket;
+  return (
+    <div>
+      <h1>Socket Service Page</h1>
+      <p>The socket connection is established and ready for communication.</p>
+    </div>
+  );
 };
 
-export const getSocket = () => socket; // Export a method to access the socket
+export default SocketPage;
