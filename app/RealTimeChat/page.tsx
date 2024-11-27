@@ -1,14 +1,22 @@
 // Import necessary modules and hooks
 "use client";
 import { useEffect, useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
+
+
 // import { io, Socket } from 'socket.io-client';
 import axios from 'axios';
 import { io, Socket } from 'socket.io-client';
 let socket: Socket; // Declare the socket variable
 
 import { initializeSocket } from '../socketService/socketService';  // Import the initialization function
+import { useRouter } from 'next/navigation';
 
 const RealTimeChat: React.FC = () => {
+  const router = useRouter();
+  const supabase = createClient();
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [message, setMessage] = useState<string>('');
   const [receivedMessages, setReceivedMessages] = useState<{ message: string; created_at: string }[]>([]);
   console.log(receivedMessages,'receivedMessages________')
@@ -19,7 +27,25 @@ const RealTimeChat: React.FC = () => {
   const [receiverId, setReceiverId] = useState<string>('3');
   const [refresh, setRefresh] = useState<boolean>(false);
   const [isModalOpen, setModalOpen] = useState(false);
-
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const {
+          data: { session },
+          error
+        } = await supabase.auth.getSession();
+        if (error) throw error;
+        setSession(session);
+        if (session?.user) {
+          setUser(session.user);
+          console.log(session,'session_____')
+        }
+      } catch (error) {
+        console.error('Error fetching user session:', error);
+      }
+    };
+    fetchSession();
+  }, [supabase]);
   const toggleModal = () => {
       setModalOpen(!isModalOpen);
   };
