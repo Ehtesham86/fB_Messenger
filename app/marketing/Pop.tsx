@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
+import axios from 'axios';
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface ModalProps {
 }
 
 const Pop = ({ isOpen, onClose, title, content }: ModalProps) => {
+  
   return (
     <>
       {isOpen && (

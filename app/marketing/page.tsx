@@ -46,6 +46,7 @@ const Marketing = () => {
 
       {/* Modal Component */}
       <Pop 
+      
         isOpen={isModalOpen} 
         onClose={closeModal} 
         title={modalContent.title} 
