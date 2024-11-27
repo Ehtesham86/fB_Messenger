@@ -1,4 +1,3 @@
-// Import necessary modules and hooks
 "use client";
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -16,6 +15,8 @@ const RealTimeChat: React.FC = () => {
   const [senderId, setSenderId] = useState<string>('08710c56-5de1-4452-b7af-4f06bfcb2096');
   const [receiverId, setReceiverId] = useState<string>('3');
   const [isModalOpen, setModalOpen] = useState(false);
+  const [text, setText] = useState<any[]>(["this is 1 text"]);
+
 
   const toggleModal = () => {
     setModalOpen(!isModalOpen);
@@ -111,35 +112,89 @@ const RealTimeChat: React.FC = () => {
     try {
       const { data } = await axios.get(`http://localhost:8000/api/messages/${chatId}`);
       setMessages(data);
+      alert("clear")
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
   };
 
+
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = event.target.value.split("\n"); // Split input by line breaks and update the array
+    setText(newText);
+  };
+
+  const handleClear = () => {
+    setText([]); // Clears the text array
+  };
+
+  const handleGenerate = () => {
+    setText((prevText) => {
+      // Get the last added text, or use a default if no text has been added yet
+      const lastAddedText = prevText.length > 0 ? prevText[prevText.length - 1] : "default text";
+      
+      // Append the last added text to the array
+       return [...prevText, text];
+      
+    });
+  };
+  const handleCopy = () => {
+    const textToCopy = text.map((item) => item).join("\n");
+    
+    // Use the clipboard API to copy the text to clipboard
+    navigator.clipboard.writeText(textToCopy).catch((err) => {
+      console.error("Failed to copy text: ", err);
+    });
+  };
+
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Chat Application</h1>
-      <div className="flex flex-col items-center justify-center h-screen">
-        {/* Modal toggle button */}
+
+      {/* First child: Form + buttons */}
+      <div style={styles.formAndButtons}>
+        
+        <div className="text ">
+          <form>
+            <div className="w-[20%] h-auto mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+              <div className="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
+                <textarea
+                  id="comment"
+                  className="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+                  placeholder="Write a comment..."
+                  value={text.map((item) => item).join("\n")}
+                  required
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div className="flex items-center justify-start mt-2">
+          <button onClick={handleGenerate} className='bg-red-600 p-2 rounded-xl  '>Gen</button>
+          <button onClick={handleClear} className='bg-green-600 p-2 rounded-xl ml-2 ' >Clear</button>
+          <button onClick={handleCopy} className='bg-blue-700 p-2 text-white rounded-xl ml-2  ' >Copy</button>
+        </div>
+      </div>
+
+      {/* Modal Toggle Button */}
+      <div className="flex flex-row items-center justify-end p-4 h-screen">
         <button
           onClick={toggleModal}
-          className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          style={styles.chatButton}
         >
           Chat
         </button>
 
         {/* Modal */}
         {isModalOpen && (
-          <div
-            id="simple-modal"
-            aria-hidden="true"
-            className="fixed top-0 right-0 z-50 w-full md:w-1/3 h-full overflow-y-auto"
-          >
+          <div id="simple-modal" aria-hidden="true" className="fixed  top-0 right-0 z-50 w-full md:w-[50%] h-full overflow-y-auto">
             <div className="relative p-4 w-full h-full max-h-full">
-              <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 h-full">
+              <div className="relative bg-white rounded-lg shadow  dark:bg-gray-700 h-full">
                 <button
                   type="button"
-                  className="absolute top-4 right-4 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="ml-[50%]   text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                   onClick={toggleModal}
                 >
                   <span className="sr-only">Close modal</span>
@@ -166,12 +221,7 @@ const RealTimeChat: React.FC = () => {
                       placeholder="Type a message..."
                       className="border rounded-lg p-2 w-full text-black"
                     />
-                    <button
-                      onClick={sendMessage}
-                      className="ml-2 bg-blue-500 text-white rounded-lg text-sm px-2 py-0"
-                    >
-                      Send Message
-                    </button>
+                    <button onClick={sendMessage} style={styles.sendButton}>Send Message</button>
                   </div>
 
                   <div style={styles.receivedMessages}>
@@ -194,34 +244,20 @@ const RealTimeChat: React.FC = () => {
   );
 };
 
-export default RealTimeChat;
-
-// Styling using JavaScript
 const styles: { [key: string]: React.CSSProperties } = {
   container: { display: 'flex', flexDirection: 'column', padding: '20px', fontFamily: 'Arial, sans-serif' },
   title: { textAlign: 'center', marginBottom: '20px' },
-  sidebar: { flex: '1', padding: '10px', borderRight: '1px solid #ccc', color: 'red' },
-  receivedMessages: {
-    marginTop: '20px',
-    overflowY: 'auto',
-    maxHeight: '700px',
-    width: '100%',
-  },
-  messageContainer: {
-    marginBottom: '1rem',
-    padding: '1rem',
-    backgroundColor: '#ffffff',
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-  },
-  messageText: {
-    fontSize: '16px',
-    wordWrap: 'break-word',
-    marginBottom: '0.5rem',
-    color: 'black',
-  },
-  createdAtText: {
-    fontSize: '12px',
-    color: '#888',
-  },
+  formAndButtons: { display: 'flex', flexDirection: 'column', alignItems: 'stretch', flex: 1 },
+  button: { backgroundColor: '#4CAF50', color: 'white', padding: '10px 20px', margin: '5px', border: 'none', borderRadius: '5px', cursor: 'pointer' },
+  chatButton: { marginTop: '20px', backgroundColor: '#4CAF50', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px' },
+  sidebar: { padding: '10px' },
+  list: { listStyleType: 'none', padding: '0' },
+  listItem: { padding: '10px', cursor: 'pointer' },
+  receivedMessages: { marginTop: '20px', overflowY: 'auto', height: '700px', width: '100%' },
+  messageContainer: { marginBottom: '1rem', padding: '1rem', backgroundColor: '#ffffff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' },
+  messageText: { fontSize: '16px', wordWrap: 'break-word', marginBottom: '0.5rem', color: 'black' },
+  createdAtText: { fontSize: '12px', color: '#888' },
+  sendButton: { backgroundColor: '#007BFF', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer' },
 };
+
+export default RealTimeChat;
