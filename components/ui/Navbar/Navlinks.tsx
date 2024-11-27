@@ -80,19 +80,16 @@ export default function Navlinks({ user }: NavlinksProps) {
               SendMessage
             </Link>
           )}
-           {user && (
-            <Link href="/mailchimp" className={s.link}>
-             mailchimp
-            </Link>
-          )}
+          
            {user && (
             <Link href="/authmailchimp" className={s.link}>
            authmailchimp
             </Link>
           )}
+           
            {user && (
-            <Link href="/CallbackPage" className={s.link}>
-          CallbackPage
+            <Link href="/RealTimeChat" className={s.link}>
+           RealTimeChat
             </Link>
           )}
           {user && (
@@ -103,6 +100,11 @@ export default function Navlinks({ user }: NavlinksProps) {
             <Link href="/testown" className={s.link}>
               testown            </Link>
           )}
+              {user && (
+            <Link href="/Setting" className={s.link}>
+              Setting            </Link>
+          )}
+
         </nav>
       </div>
 
