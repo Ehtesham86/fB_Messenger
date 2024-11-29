@@ -15,8 +15,8 @@ const RealTimeChat: React.FC = () => {
   const [senderId, setSenderId] = useState<string>('08710c56-5de1-4452-b7af-4f06bfcb2096');
   const [receiverId, setReceiverId] = useState<string>('3');
   const [isModalOpen, setModalOpen] = useState(false);
-  const [text, setText] = useState<any[]>(["this is 1 text"]);
-
+  const [text, setText] = useState<any[]>(["Life is a journey of endless possibilities. Each moment offers opportunities to grow, learn, and explore. Embrace challenges as lessons, cherish the simple joys, and nurture meaningful connections. Together, these experiences shape a life worth celebrating."]);
+  const [showPopover, setShowPopover] = useState(false);
 
   const toggleModal = () => {
     setModalOpen(!isModalOpen);
@@ -120,9 +120,15 @@ const RealTimeChat: React.FC = () => {
 
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newText = event.target.value.split("\n"); // Split input by line breaks and update the array
+    const textarea = event.target;
+    textarea.style.height = "auto"; // Reset height first
+    textarea.style.height = `${textarea.scrollHeight}px`; // Adjust height to the scrollHeight (content height)
+  
+    // Update the state with the new text
+    const newText = textarea.value.split("\n");
     setText(newText);
   };
+  
 
   const handleClear = () => {
     setText([]); // Clears the text array
@@ -130,23 +136,37 @@ const RealTimeChat: React.FC = () => {
 
   const handleGenerate = () => {
     setText((prevText) => {
-      // Get the last added text, or use a default if no text has been added yet
       const lastAddedText = prevText.length > 0 ? prevText[prevText.length - 1] : "default text";
-      
-      // Append the last added text to the array
-       return [...prevText, text];
-      
+      const updatedText = [...prevText, lastAddedText];
+  
+      // Adjust height after updating the text
+      const textarea = document.getElementById("comment") as HTMLTextAreaElement;
+      if (textarea) {
+        textarea.style.height = "auto"; // Reset height first
+        textarea.style.height = `${textarea.scrollHeight}px`; // Adjust height based on new content
+      }
+  
+      return updatedText;
     });
   };
+  
+
+
   const handleCopy = () => {
     const textToCopy = text.map((item) => item).join("\n");
     
     // Use the clipboard API to copy the text to clipboard
-    navigator.clipboard.writeText(textToCopy).catch((err) => {
-      console.error("Failed to copy text: ", err);
-    });
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        // Show pop-up after successful copy
+        setShowPopover(true); // Assuming you have a state to manage the pop-up visibility
+        setTimeout(() => setShowPopover(false), 3000); // Hide the pop-up after 3 seconds
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+      });
   };
-
+  
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Chat Application</h1>
@@ -156,25 +176,41 @@ const RealTimeChat: React.FC = () => {
         
         <div className="text ">
           <form>
-            <div className="w-[20%] h-auto mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-              <div className="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
-                <textarea
-                  id="comment"
-                  className="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
-                  placeholder="Write a comment..."
-                  value={text.map((item) => item).join("\n")}
-                  required
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
+          <div className="w-[50%] h-auto mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+  <div className="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
+  <textarea
+  id="comment"
+  className="w-full px-0 text-sm font-bold text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+  placeholder="Write a comment..."
+  value={text.map((item) => item).join("\n")}
+  required
+  onChange={handleChange}
+  style={{
+    overflow: "hidden",  // Prevent internal scrolling
+    resize: "vertical",  // Allow manual resizing vertically
+    minHeight: "50px",    // Minimum height (adjust as needed)
+  }}
+/>
+  </div>
+</div>
+
           </form>
         </div>
 
         <div className="flex items-center justify-start mt-2">
           <button onClick={handleGenerate} className='bg-red-600 p-2 rounded-xl  '>Gen</button>
           <button onClick={handleClear} className='bg-green-600 p-2 rounded-xl ml-2 ' >Clear</button>
-          <button onClick={handleCopy} className='bg-blue-700 p-2 text-white rounded-xl ml-2  ' >Copy</button>
+          <button
+        onClick={handleCopy}
+        className=" bg-blue-600 text-white p-2 ml-2 rounded-xl hover:bg-blue-700"
+      >
+        Copy 
+      </button>
+      {showPopover && (
+        <div className="relative bottom-5 ml-3 bg-gray-700 text-white py-2 px-4 rounded-lg shadow-lg transition-opacity duration-300">
+          Text copied to clipboard!❤
+        </div>
+      )}
         </div>
       </div>
 
